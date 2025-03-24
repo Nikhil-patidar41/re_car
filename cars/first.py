@@ -1,17 +1,10 @@
 # first.py
 import streamlit as st
 import pandas as pd
-import joblib
+from pycaret.regression import load_model, predict_model
 
-# Load the preprocessing pipeline and model
-# Note: You need to save the pipeline during training (explained below)
-try:
-    pipeline = joblib.load('preprocessing_pipeline.pkl')
-except FileNotFoundError:
-    st.error("Preprocessing pipeline not found! Please save the pipeline during training.")
-    st.stop()
-
-model = joblib.load('car_model.pkl')
+# Load the saved model
+model = load_model('car_model')
 
 # Title of the app
 st.title("Car Price Prediction App")
@@ -51,11 +44,11 @@ input_data = pd.DataFrame({
 
 # Predict button
 if st.button("Predict Price"):
-    # Apply preprocessing pipeline
-    input_data_transformed = pipeline.transform(input_data)
-    
     # Make prediction
-    predicted_price = model.predict(input_data_transformed)[0]
+    prediction = predict_model(model, data=input_data)
+    
+    # Since log_transform is not used, prediction is already in original scale
+    predicted_price = prediction['prediction_label'].iloc[0]
     
     # Display the predicted price
     st.success(f"Predicted Price: ₹{predicted_price:,.2f}")
