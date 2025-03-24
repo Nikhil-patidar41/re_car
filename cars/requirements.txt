@@ -1,0 +1,5 @@
+streamlit==1.43.2
+numpy==2.1.3
+pandas==2.2.3
+pickle
+pycaret
